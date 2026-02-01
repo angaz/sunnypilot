@@ -42,7 +42,12 @@ assert arch in [
 env = Environment(
   ENV={
     "PATH": os.environ['PATH'],
-    "PYTHONPATH": Dir("#").abspath + ':' + Dir(f"#third_party/acados").abspath,
+    "CPATH": os.environ.get('CPATH', ''),
+    "LIBRARY_PATH": os.environ.get('LIBRARY_PATH', ''),
+    "LD_LIBRARY_PATH": os.environ.get('LD_LIBRARY_PATH', ''),
+    "QTDIR": os.environ.get('QTDIR', ''),
+    "PKG_CONFIG_PATH": os.environ.get('PKG_CONFIG_PATH', ''),
+    "PYTHONPATH": Dir("#").abspath + ':' + Dir(f"#third_party/acados").abspath + (':' + os.environ['PYTHONPATH'] if 'PYTHONPATH' in os.environ else ''),
     "ACADOS_SOURCE_DIR": Dir("#third_party/acados").abspath,
     "ACADOS_PYTHON_INTERFACE_PATH": Dir("#third_party/acados/acados_template").abspath,
     "TERA_PATH": Dir("#").abspath + f"/third_party/acados/{arch}/t_renderer"
