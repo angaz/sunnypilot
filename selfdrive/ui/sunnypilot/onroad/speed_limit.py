@@ -31,7 +31,7 @@ SpeedLimitSource = custom.LongitudinalPlanSP.SpeedLimit.Source
 class Colors:
   WHITE = rl.WHITE
   BLACK = rl.BLACK
-  RED = rl.RED
+  RED = rl.Color(235, 32, 32, 255)
   GREY = rl.Color(145, 155, 149, 255)
   DARK_GREY = rl.Color(77, 77, 77, 255)
   SUB_BG = rl.Color(0, 0, 0, 180)
@@ -182,22 +182,17 @@ class SpeedLimitRenderer(Widget):
     center = rl.Vector2(rect.x + rect.width / 2, rect.y + rect.height / 2)
     radius = (rect.width + 18) / 2
 
-    white = rl.Color(255, 255, 255, int(255 * alpha))
-    red = rl.Color(255, 0, 0, int(255 * alpha))
-
-    if hasattr(color, 'r'):
-      text_color = rl.Color(color.r, color.g, color.b, int(255 * alpha))
-    else:
-      text_color = rl.Color(color[0], color[1], color[2], int(255 * alpha))
-
-    black = rl.Color(0, 0, 0, int(255 * alpha))
-    dark_grey = rl.Color(77, 77, 77, int(255 * alpha))
+    white = rl.color_alpha(Colors.WHITE, alpha)
+    red = rl.color_alpha(Colors.RED, alpha)
+    black = rl.color_alpha(Colors.BLACK, alpha)
+    dark_grey = rl.color_alpha(Colors.DARK_GREY, alpha)
+    text_color = rl.color_alpha(color, alpha)
 
     rl.draw_circle_v(center, radius, white)
-    rl.draw_ring(center, radius * 0.80, radius, 0, 360, 36, red)
+    rl.draw_ring(center, radius * 0.75, radius, 0, 360, 36, red)
 
-    f_size = 70 if len(val) >= 3 else 85
-    self._draw_text_centered(self.font_bold, val, f_size, center, text_color)
+    font_size = 70 if len(val) >= 3 else 85
+    self._draw_text_centered(self.font_bold, val, font_size, center, text_color)
 
     if sub and has_limit:
       s_radius = radius * 0.4
@@ -206,18 +201,14 @@ class SpeedLimitRenderer(Widget):
       rl.draw_circle_v(s_center, s_radius, black)
       rl.draw_ring(s_center, s_radius - 3, s_radius, 0, 360, 36, dark_grey)
 
-      f_scale = 0.5 if len(sub) < 3 else 0.45
-      self._draw_text_centered(self.font_bold, sub, int(s_radius * 2 * f_scale), s_center, white)
+      font_scale = 0.5 if len(sub) < 3 else 0.45
+      self._draw_text_centered(self.font_bold, sub, int(s_radius * 2 * font_scale), s_center, white)
 
   def _render_mutcd(self, rect, val, sub, color, has_limit, alpha=1.0):
-    white = rl.Color(255, 255, 255, int(255 * alpha))
-    black = rl.Color(0, 0, 0, int(255 * alpha))
-    dark_grey = rl.Color(77, 77, 77, int(255 * alpha))
-
-    if hasattr(color, 'r'):
-      text_color = rl.Color(color.r, color.g, color.b, int(255 * alpha))
-    else:
-      text_color = rl.Color(color[0], color[1], color[2], int(255 * alpha))
+    white = rl.color_alpha(Colors.WHITE, alpha)
+    black = rl.color_alpha(Colors.BLACK, alpha)
+    dark_grey = rl.color_alpha(Colors.DARK_GREY, alpha)
+    text_color = rl.color_alpha(color, alpha)
 
     rl.draw_rectangle_rounded(rect, 0.35, 10, white)
     inner = rl.Rectangle(rect.x + 10, rect.y + 10, rect.width - 20, rect.height - 20)
