@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import abc
 import pyray as rl
+import time
 from enum import IntEnum
 from typing import TypeVar
 from collections.abc import Callable
@@ -43,6 +44,7 @@ class Widget(abc.ABC):
     self._click_callback: Callable[[], None] | None = None
     self._multi_touch = False
     self.__was_awake = True
+    self._show_time = 0.0
 
   @property
   def rect(self) -> rl.Rectangle:
@@ -145,6 +147,10 @@ class Widget(abc.ABC):
       if not self._multi_touch and mouse_event.slot != 0:
         continue
 
+      # Debounce processing input immediately after showing to prevent overlapping touch triggering unintended actions
+      if mouse_event.t <= self._show_time + 0.2:
+        continue
+
       mouse_in_rect = rl.check_collision_point_rec(mouse_event.pos, hit_rect)
       # Ignores touches/presses that start outside our rect
       # Allows touch to leave the rect and come back in focus if mouse did not release
@@ -226,6 +232,8 @@ class Widget(abc.ABC):
       child.show_event()
     if DEBUG:
       Widget._show_hide_depth -= 1
+
+    self._show_time = time.monotonic()
 
   def hide_event(self):
     """Called when widget is hidden. Propagates to registered children."""
